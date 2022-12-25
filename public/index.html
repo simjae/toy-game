@@ -10,9 +10,9 @@
     <h1>hello Express</h1>
 
 
-    <input type="text" name="nickname">
-    <input type="text" name="message" id="messageInput">
-    <button onclick="sendBtn(this)">전송</button>
+    <input type="text" name="nickname" id="nickname">
+    <input type="text" name="message" id="message">
+    <button onclick="sendMessage()">전송</button>
 
 
     <div id="chat-log"></div>
@@ -20,16 +20,27 @@
 <script>
 
     const ws = new WebSocket("ws://localhost:8001");
-
-    function sendBtn (target) {
-        let text = target.innerText;
-        console.log(text);
-        ws.send(text);
-    }
     //매세지 전송
+    ws.onmessage = receiveMessage;
     function sendMessage() {}
 
     // 메세지 수신
-    function receiveMessage () {}
+    function receiveMessage (ev) {
+        const chat = document.createElement("div");
+        const mesaage = document.createTextNode(ev.data);
+        chat.appendChild(mesaage);
+
+        const chatLog  = document.getElementById("chat-log");
+        chatLog.appendChild(chat);
+    }
+
+    // 메세지 전송
+    function sendMessage() {
+        const nickname = document.getElementById("nickname").value
+        const message = document.getElementById("message").value
+        const fullMessage = `${nickname}: ${message}`
+    
+        ws.send(fullMessage)
+    }
 </script>
 </html>

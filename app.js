@@ -2,24 +2,37 @@ const express = require("express");
 const { WebSocketServer } = require("ws");
 const app = express();
 
-
-
 app.use(express.static("public"))
-app.listen(8000, ()=> {
+
+
+
+
+app.listen(8000, () => {
     console.log("Example app listening on port 8000")
 });
 
 
-const wss = new WebSocketServer({port :8001})
+const wss = new WebSocketServer({ port: 8001 })
 
 
-wss.on("connection" , (ws,request) => {
-    //request => 클라이언트로부터 전송된 Http GET 리퀘스트 정보 
-    ws.on("message", data => {
-        console.log(`received from user :${data}`)
-        ws.send(`Received ${data}`) // 서버의 답장
-    })
-    
-    ws.send(`hellow local server come in, ${request.socket.remoteAddress}`);
+wss.broadcast = (message) => {
+    wss.clients.forEach((client) => {
+        client.send(message);
+    });
+};
 
-})
+wss.on("connection", (ws, request) => {
+    ws.on("message", (data) => {
+        wss.broadcast(data.toString());
+    });
+
+    ws.on("close", () => {
+        wss.broadcast(`유저 한명이 떠났습니다. 현재 유저 ${wss.clients.size} 명`);
+    });
+
+    wss.clients.forEach((client) => {
+        wss.broadcast(
+            `새로운 유저가 접속했습니다. 현재 유저 ${wss.clients.size} 명`
+        );
+    });
+});

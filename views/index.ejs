@@ -72,19 +72,28 @@
         transports: ['websocket']
     });
     function sendMessage() {
-        socket.emit('message', '123');
+        let name = document.getElementById("nickname").value;
+        let context = document.getElementById("message").value;
+        socket.emit('message', {name, context});
     }
 
     socket.on('usercount', (count) => {
-        var userCounter = document.getElementsByClassName('user-list');
+        let userCounter = document.getElementsByClassName('user-list');
         userCounter.innerText = "현재 " + count + "명이 서버에 접속해있습니다.";
     });
 
     // 메시지 수신시 HTML에 메시지 내용 작성
     socket.on('message', (msg) => {
-        var messageList = document.getElementById('chat-log');
-        var messageTag = document.createElement("li");
-        messageTag.innerText = msg;
+        let messageList = document.getElementById('chat-log');
+        let messageTag = document.createElement("div");
+        let nameSpan = document.createElement("span");
+        let contextSpan = document.createElement("span");
+        
+        nameSpan.innerText = msg.name
+        messageTag.appendChild(nameSpan);
+        contextSpan.innerText = msg.context; 
+        messageTag.appendChild(contextSpan);
+
         messageList.appendChild(messageTag);
     });
 

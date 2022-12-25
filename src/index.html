@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="/css/main.css">
+
+<body>
+    <main>
+        <h1 class="main-header">방배동벨리 사내게임</h1>
+        <div class="user-list-wrap">
+            <span>참가자</span>
+            <span class="user-list"></span>
+            <span>인원수</span>
+        </div>
+        <div class="noti-wrap">
+            <div>게임 스타트 시간</div>
+            <div>스타트 버튼</div>
+        </div>
+
+        <h3 class="noti">*카드를 선택해주세요*</h3>
+
+        <div class="game-wrap">
+            <div class="card scissors">가위</div>
+            <div class="card rock">바위</div>
+            <div class="card paper">보</div>
+        </div>
+        <div class="chat-wrap">
+            <input type="text" name="nickname" id="nickname">
+            <input type="text" name="message" id="message">
+            <div onclick="sendMessage()" class="send-btn">
+                <span>전송</span>
+            </div>
+        </div>
+        <div id="chat-log"></div>
+    </main>
+
+</body>
+<script src="/js/script.js"></script>
+<script>
+
+    const ws = new WebSocket("ws://localhost:8001");
+    //매세지 전송
+    ws.onmessage = receiveMessage;
+    function sendMessage() { }
+
+    // 메세지 수신
+    function receiveMessage(ev) {
+        const chat = document.createElement("div");
+        const mesaage = document.createTextNode(ev.data);
+        chat.appendChild(mesaage);
+
+        const chatLog = document.getElementById("chat-log");
+        chatLog.appendChild(chat);
+    }
+
+    // 메세지 전송
+    function sendMessage() {
+        const nickname = document.getElementById("nickname").value
+        const message = document.getElementById("message").value
+        const fullMessage = `${nickname}: ${message}`
+
+        ws.send(fullMessage)
+    }
+</script>
+
+</html>

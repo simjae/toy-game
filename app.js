@@ -2,8 +2,12 @@ const express = require("express");
 const { WebSocketServer } = require("ws");
 const app = express();
 
-app.use(express.static("public"))
+app.use(express.static("src"))
 
+
+app.get('/', function (req, res) {
+    res.send('hello world!');
+});
 
 
 
